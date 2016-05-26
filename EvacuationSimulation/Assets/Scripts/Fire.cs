@@ -1,12 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using UnityEngine;
 
-namespace EvacuationSimulation
+public class Fire : MonoBehaviour
 {
-    class Fire
+    private float time;
+    private int state = 1;
+    public Sprite[] fireSprites;
+
+    // Use this for initialization
+    void Start()
     {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        time += Time.deltaTime;
+        if (time > 4)
+        {
+            state = 2;
+            GetComponent<SpriteRenderer>().sprite = fireSprites[1];
+        }
+        if (time > 10 && state == 2)
+        {
+            state = 3;
+            GetComponent<SpriteRenderer>().sprite = fireSprites[2];
+        }
     }
 }

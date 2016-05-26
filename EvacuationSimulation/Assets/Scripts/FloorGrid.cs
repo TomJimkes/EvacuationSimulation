@@ -1,22 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using UnityEngine;
 
 namespace EvacuationSimulation
 {
-    class FloorGrid
+    class FloorGrid : MonoBehaviour
     {
-        //true -> free space
-        //false -> not accessable space
-        bool[,] objectGrid;
+        bool[,] grid = new bool[5,5];
 
-        //This class holds a basic representation of the environment.
-        //Squares are either collidable or they aren't, which will allow the agent to plan a path.
-        public FloorGrid(int width, int height)
+        void Start()
         {
-            objectGrid = new bool[width, height];
+            GameObject tile = Resources.Load<GameObject>("Prefabs/Floortile");
+            for (int x = 0; x < grid.GetLength(0); x++)
+            {
+                for (int y = 0; y < grid.GetLength(0); y++)
+                {
+                    var t = Instantiate(tile);
+                    t.transform.localPosition = new Vector3(x, y);
+                    t.transform.parent = transform;
+                }
+            }
         }
     }
 }

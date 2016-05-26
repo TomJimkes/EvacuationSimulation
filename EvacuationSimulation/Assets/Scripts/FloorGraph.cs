@@ -39,7 +39,7 @@ namespace EvacuationSimulation
         }
         
         //Add an edge to the list
-        public void AddEgde(int id, int origin, int destination)
+        public void AddEdge(int id, int origin, int destination)
         {
             edges.Add(id, new FloorGraphEdge(id, origin, destination));
             nodes[origin].GetIncident.Add(id);
@@ -47,7 +47,7 @@ namespace EvacuationSimulation
         }
 
         //Remove an edge from the list
-        public void RemoveEgde(int id)
+        public void RemoveEdge(int id)
         {
             //Remove incident pointers
             nodes[edges[id].GetOrigin].GetIncident.Remove(id);

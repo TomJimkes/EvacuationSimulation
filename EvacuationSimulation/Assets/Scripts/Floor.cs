@@ -8,5 +8,12 @@ namespace EvacuationSimulation
 {
     class Floor
     {
+        FloorGraph fGraph;
+        FloorGrid fGrid;
+
+        public Floor()
+        {
+
+        }
     }
 }

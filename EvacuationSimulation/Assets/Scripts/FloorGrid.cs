@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+//using Algorithms;
+using UnityEngine;
 
 namespace EvacuationSimulation
 {
@@ -13,6 +15,7 @@ namespace EvacuationSimulation
             {
                 for (int y = 0; y < grid.GetLength(0); y++)
                 {
+                    grid[ x, y ] = true;
                     var t = Instantiate(tile);
                     t.transform.localPosition = new Vector3(x, y);
                     t.transform.parent = transform;

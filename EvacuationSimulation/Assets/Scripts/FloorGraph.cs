@@ -19,9 +19,9 @@ namespace EvacuationSimulation
         }
 
         //Add a node to the graph
-        public void AddNode(int id, List<int> incidentEdges)
+        public void AddNode(int id, List<int> incidentEdges, int certainty = 1, bool live = true)
         {
-            nodes.Add(id, new FloorGraphNode(id, incidentEdges));
+            nodes.Add(id, new FloorGraphNode(id, incidentEdges, certainty, live));
         }
 
         //Remove a node from the graph
@@ -39,9 +39,9 @@ namespace EvacuationSimulation
         }
         
         //Add an edge to the list
-        public void AddEdge(int id, int origin, int destination)
+        public void AddEdge(int id, int origin, int destination, int certainty = 1, bool live = true)
         {
-            edges.Add(id, new FloorGraphEdge(id, origin, destination));
+            edges.Add(id, new FloorGraphEdge(id, origin, destination, certainty, live));
             nodes[origin].GetIncident.Add(id);
             nodes[destination].GetIncident.Add(id);
         }
@@ -55,6 +55,28 @@ namespace EvacuationSimulation
 
             //Remove the edge
             edges.Remove(id);
+        }
+
+        //Get a node
+        public FloorGraphNode Node(int id)
+        {
+            return nodes[id];
+        }
+
+        //Get an edge
+        public FloorGraphEdge Edge(int id)
+        {
+            return edges[id];
+        }
+
+        public Dictionary<int,FloorGraphEdge> Edges
+        {
+            get { return edges; }
+        }
+
+        public Dictionary<int,FloorGraphNode> Nodes
+        {
+            get { return nodes; }
         }
     }
 }

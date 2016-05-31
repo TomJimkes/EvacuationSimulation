@@ -34,11 +34,13 @@ namespace EvacuationSimulation
         public int Certainty
         {
             get { return certainty; }
+            set { certainty = value; }
         }
 
         public bool Live
         {
             get { return live; }
+            set { live = value; }
         }
 
     }

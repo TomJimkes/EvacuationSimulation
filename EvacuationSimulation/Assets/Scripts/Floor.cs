@@ -60,6 +60,8 @@ namespace EvacuationSimulation
             return -1;
         }
 
+        //TODO -> certainty
+
         //Use DFS to expand both mental maps
         private void DFSExpand(FloorGraph extGraph, int commonNode)
         {
@@ -68,6 +70,18 @@ namespace EvacuationSimulation
 
             //visited edges
             List<int> visited = new List<int>();
+
+            //Set the highest certainty and liveness
+            if(fGraph.Nodes[commonNode].Certainty > extGraph.Nodes[commonNode].Certainty)
+            {
+                extGraph.Nodes[commonNode].Certainty = fGraph.Nodes[commonNode].Certainty;
+                extGraph.Nodes[commonNode].Live = fGraph.Nodes[commonNode].Live;
+            }
+            else
+            {
+                fGraph.Nodes[commonNode].Certainty = extGraph.Nodes[commonNode].Certainty;
+                fGraph.Nodes[commonNode].Live = extGraph.Nodes[commonNode].Live;
+            }
 
             foreach(int e in extGraph.Nodes[commonNode].GetIncident)
             {
@@ -96,6 +110,18 @@ namespace EvacuationSimulation
                     }
                     else
                     {
+                        //set certainty and liveness
+                        if(fGraph.Edges[e].Certainty > extGraph.Edges[e].Certainty)
+                        {
+                            extGraph.Edges[e].Certainty = fGraph.Edges[e].Certainty;
+                            extGraph.Edges[e].Live = fGraph.Edges[e].Live;
+                        }
+                        else
+                        {
+                            fGraph.Edges[e].Certainty = extGraph.Edges[e].Certainty;
+                            fGraph.Edges[e].Live = extGraph.Edges[e].Live;
+                        }
+
                         //Recurse on destination
                         DFSExpand(extGraph, fGraph.Edges[e].GetDestination);
                     }

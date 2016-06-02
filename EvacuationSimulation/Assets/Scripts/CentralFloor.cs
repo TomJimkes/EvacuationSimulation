@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 
 namespace EvacuationSimulation
 {
-    public class Floor
+    class CentralFloor
     {
         FloorGraph fGraph;
         FloorGrid fGrid;
 
-        public Floor()
+        public CentralFloor()
         {
 
         }
@@ -27,6 +26,13 @@ namespace EvacuationSimulation
             get { return fGrid; }
         }
 
-        
+        //Create grid
+        private void createGrid()
+        {
+            //Read from file
+            //build grid
+        }
+        //Build graph
+
     }
 }

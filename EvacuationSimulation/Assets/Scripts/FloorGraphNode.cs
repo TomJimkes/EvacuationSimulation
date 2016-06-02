@@ -5,12 +5,14 @@ using System.Text;
 
 namespace EvacuationSimulation
 {
-    class FloorGraphNode
+    public class FloorGraphNode
     {
         int id;
         List<int> incident;
         int certainty;
         bool live; //Indicates wether a node is accessible, or if it was removed from the mental map (due to obstruction)
+
+        //TODO: ASSIGN EXIT VARIABLE IF A DOOR IS AN EXIT
 
         public FloorGraphNode(int id, List<int> incident, int certainty = 1, bool live = true)
         {

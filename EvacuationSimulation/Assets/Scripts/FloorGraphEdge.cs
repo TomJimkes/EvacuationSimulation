@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EvacuationSimulation
 {
-    class FloorGraphEdge
+    public class FloorGraphEdge
     {
         int id;
         int origin;

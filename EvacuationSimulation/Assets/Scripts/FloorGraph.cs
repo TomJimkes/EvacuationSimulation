@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace EvacuationSimulation
 {
-    class FloorGraph
+    public class FloorGraph
     {
         Dictionary<int, FloorGraphNode> nodes;
         Dictionary<int, FloorGraphEdge> edges;

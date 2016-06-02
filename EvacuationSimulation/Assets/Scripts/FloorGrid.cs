@@ -2,8 +2,16 @@
 
 namespace EvacuationSimulation
 {
-    class FloorGrid : MonoBehaviour
+    public class FloorGrid : MonoBehaviour
     {
+        //How many tile types do we need?
+        /*  wall
+            object (flammable)
+            Free
+            Door-open
+            Door-closed
+            Exit(special kind of door) (this should be a node property!!!!)
+        */
         bool[,] grid = new bool[5,5];
 
         void Start()

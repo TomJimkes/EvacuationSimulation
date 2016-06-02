@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace EvacuationSimulation
 {
-    class Civilian : Agent
+    public class Civilian : Agent
     {
     }
 }

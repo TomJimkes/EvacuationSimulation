@@ -11,15 +11,15 @@ namespace EvacuationSimulation
         List<int> incident;
         int certainty;
         bool live; //Indicates wether a node is accessible, or if it was removed from the mental map (due to obstruction)
+        bool exit;
 
-        //TODO: ASSIGN EXIT VARIABLE IF A DOOR IS AN EXIT
-
-        public FloorGraphNode(int id, List<int> incident, int certainty = 1, bool live = true)
+        public FloorGraphNode(int id, List<int> incident, int certainty = 1, bool live = true, bool exit = false)
         {
             this.id = id;
             this.incident = incident;
             this.certainty = certainty;
             this.live = live;
+            this.exit = exit;
         }
 
         //Getters Setters

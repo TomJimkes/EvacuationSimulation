@@ -12,8 +12,9 @@ namespace EvacuationSimulation
         int destination;
         int certainty;
         bool live;
+        int room;
 
-        public FloorGraphEdge(int id, int origin, int destination, int certainty = 1, bool live = true)
+        public FloorGraphEdge(int id, int origin, int destination, int room, int certainty = 1, bool live = true)
         {
             this.id = id;
             this.origin = origin;
@@ -54,6 +55,11 @@ namespace EvacuationSimulation
         {
             get { return certainty; }
             set { certainty = value; }
+        }
+
+        public int Room
+        {
+            get { return room; }
         }
     }
 }

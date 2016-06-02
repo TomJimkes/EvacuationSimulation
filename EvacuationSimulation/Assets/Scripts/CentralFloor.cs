@@ -11,11 +11,12 @@ namespace EvacuationSimulation
     {
         FloorGraph fGraph;
         FloorGrid fGrid;
+        int dim;
 
         public CentralFloor()
         {
             createGrid();
-            createGraph();
+            //createGraph();
         }
 
         //Getters setters
@@ -35,7 +36,7 @@ namespace EvacuationSimulation
             //Read from file
             //build grid
             Texture2D map = Resources.Load<Texture2D>("Maps/test");
-            int dim = map.height;
+            dim = map.height;
             Color32[] pixels = map.GetPixels32();
 
             Color32[,] trueGrid = new Color32[dim,dim];
@@ -51,11 +52,96 @@ namespace EvacuationSimulation
             
         }
         //Build graph
-        private void createGraph()
+        private void createGraph(Color32[,] map)
         {
-            //Take grid
-            //perform flood search
-            //create edges and nodes respectively
+
+            int[,] abs = new int[dim, dim];
+            //0 is free
+            //1 is obstruction
+            //2 is door
+            //3 is exit
+            //4 is filled by the fill algorithm 
+
+            for(int i = 0; i < dim; i++)
+            {
+                for(int j = 0; j < dim; j++)
+                {
+                    int sum = map[i, j].r + map[i, j].g + map[i, j].b;
+                    if (sum == 0)
+                    { abs[i, j] = 0; }
+                    else if (sum == 765 || sum == map[i, j].b)
+                    { abs[i, j] = 1; }
+                    else if (sum == 384)
+                    { abs[i, j] = 3; }
+                    else
+                    { abs[i, j] = 2; }
+                }
+            }
+
+            //The first index represents doors
+            //The second index represents exits
+
+            //For each iteration of the algorithm, we can add a new room. Edges get a room property.
+            int room = 0;
+
+            for (int i = 0; i < dim; i++)
+            {
+                for(int j = 0; j < dim; j++)
+                {
+                    if (abs[i, j] == 0)
+                    {
+                        //Create the graph
+                        int[] result = floodSearch(abs, i, j, new int[] { 0, 0 });
+
+                        //Add all regular doors to the graph
+                        for(int x = 0; x <= result[0]; x++)
+                        {
+                            //TODO add nodes and edges using the result matrix
+                            //TODO give edges a room property
+                        }
+
+                        //Add all exits to the graph
+                        for (int x = 0; x <= result[1]; x++)
+                        {
+                            //TODO add nodes and edges using the result matrix
+                            //TODO give edges a room property
+                        }
+
+                        room++;
+                    }
+                }
+            }
+            
+        }
+
+        //A recursive floodsearch algorithm for creating a graph from the grid
+        //The j and i variables are used to find empty spaces to start the algorithm on
+        //these will be increased in each run of the algorithm
+        private int[] floodSearch(int[,] map, int i, int j, int[] result)
+        {
+            if (i >= dim || i < 0 || j >= dim || j < 0)
+            {
+                return result;
+            }
+            //foreach adjacent
+            //if door -> index 0 ++
+            //if exit -> index 1 ++
+
+            switch (map[i, j])
+            {
+                case 0: { map[i, j] = 4; break; }
+                case 2: { result[0]++; return result; }
+                case 3: { result[1]++; return result; }
+                default: { return result; }
+            }
+
+            //recurse on all 4 adjacent neighbours
+            floodSearch(map, i + 1, j, result);
+            floodSearch(map, i - 1, j, result);
+            floodSearch(map, i, j + 1, result);
+            floodSearch(map, i, j - 1, result);
+
+            return result;
         }
 
     }

@@ -97,7 +97,7 @@ namespace EvacuationSimulation
                         fGraph.Nodes[commonNode].GetIncident.Add(e);
 
                         //Copy edge to iEdges
-                        extGraph.AddEdge(extGraph.Edges[e].Id, extGraph.Edges[e].GetOrigin, extGraph.Edges[e].GetDestination, extGraph.Edges[e].Certainty, extGraph.Edges[e].Live);
+                        extGraph.AddEdge(extGraph.Edges[e].Id, extGraph.Edges[e].Room ,extGraph.Edges[e].GetOrigin, extGraph.Edges[e].GetDestination, extGraph.Edges[e].Certainty, extGraph.Edges[e].Live);
 
                         //Add destination node to iNodes
                         fGraph.AddNode(destNode, new List<int>(), extGraph.Nodes[destNode].Certainty, extGraph.Nodes[destNode].Live);
@@ -143,7 +143,7 @@ namespace EvacuationSimulation
             //Add edges
             foreach (KeyValuePair<int, FloorGraphEdge> pair in extGraph.Edges)
             {
-                fGraph.AddEdge(pair.Value.Id, pair.Value.GetOrigin, pair.Value.GetDestination, pair.Value.Certainty, pair.Value.Live);
+                fGraph.AddEdge(pair.Value.Id, pair.Value.Room, pair.Value.GetOrigin, pair.Value.GetDestination, pair.Value.Certainty, pair.Value.Live);
             }
         }
 

@@ -2,12 +2,9 @@
 
 namespace EvacuationSimulation
 {
-    enum TileType
-    { Empty, Wall, Other }
-
     public class FloorGrid : MonoBehaviour
     {
-        TileType[,] grid = new TileType[5, 5];
+        public Color32[,] grid;
 
         void Start()
         {
@@ -15,16 +12,21 @@ namespace EvacuationSimulation
             tilePrefabs[0] = Resources.Load<GameObject>("Prefabs/Floortile");
             tilePrefabs[1] = Resources.Load<GameObject>("Prefabs/Walltile");
             tilePrefabs[2] = tilePrefabs[0];
-
-            grid[2,2] = TileType.Wall;
-            grid[2,3] = TileType.Wall;
-            grid[2,4] = TileType.Wall;
-
+            
             for (int x = 0; x < grid.GetLength(0); x++)
             {
                 for (int y = 0; y < grid.GetLength(0); y++)
                 {
-                    var t = Instantiate(tilePrefabs[(int)grid[x, y]]);
+                    GameObject t;
+                    switch (grid[x, y].r)
+                    {
+                        case 0:
+                            t = Instantiate(tilePrefabs[1]);
+                            break;
+                        default:
+                            t = Instantiate(tilePrefabs[0]);
+                            break;
+                    }
                     t.transform.localPosition = new Vector3(x, y);
                     t.transform.parent = transform;
                 }

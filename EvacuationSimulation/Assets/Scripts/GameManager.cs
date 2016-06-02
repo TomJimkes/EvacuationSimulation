@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
 	void Start () {
 	    
         //load floor grid
+        CentralFloor.createGrid();
+
 
         //spawn initial fire somewhere
 	}

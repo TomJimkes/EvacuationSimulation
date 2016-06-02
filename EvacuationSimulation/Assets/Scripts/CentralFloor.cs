@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace EvacuationSimulation
 {
-    class CentralFloor
+    class CentralFloor : MonoBehaviour
     {
         FloorGraph fGraph;
         FloorGrid fGrid;
@@ -30,7 +30,7 @@ namespace EvacuationSimulation
         }
 
         //Create grid
-        private void createGrid()
+        public static void createGrid()
         {
             //Read from file
             //build grid
@@ -45,10 +45,14 @@ namespace EvacuationSimulation
             for(int i = 0; i < pixels.Length; i++)
             {
                 int column = i % dim;
-                int row = dim - (i / dim);
-                trueGrid[row, column] = pixels[i];
+                int row = dim - (i / dim) - 1;
+                trueGrid[column, row] = pixels[i];
             }
-            
+
+            GameObject floorPrefab = Resources.Load<GameObject>("Prefabs/Floor");
+            var floorGameObject = Instantiate(floorPrefab);
+            floorGameObject.GetComponent<FloorGrid>().grid = trueGrid;
+
         }
         //Build graph
         private void createGraph()

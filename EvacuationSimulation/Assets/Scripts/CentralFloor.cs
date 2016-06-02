@@ -51,6 +51,7 @@ namespace EvacuationSimulation
 
             GameObject floorPrefab = Resources.Load<GameObject>("Prefabs/Floor");
             var floorGameObject = Instantiate(floorPrefab);
+            fGrid = floorGameObject.GetComponent<FloorGrid>();
             floorGameObject.GetComponent<FloorGrid>().grid = trueGrid;
 
         }

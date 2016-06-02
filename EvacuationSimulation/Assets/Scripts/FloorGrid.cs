@@ -5,7 +5,7 @@ namespace EvacuationSimulation
     enum TileType
     { Empty, Wall, Other }
 
-    class FloorGrid : MonoBehaviour
+    public class FloorGrid : MonoBehaviour
     {
         TileType[,] grid = new TileType[5, 5];
 

@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace EvacuationSimulation
 {
-    class Firefighter : Agent
+    public class Firefighter : Agent
     {
         Queue<Order> orders;
     }

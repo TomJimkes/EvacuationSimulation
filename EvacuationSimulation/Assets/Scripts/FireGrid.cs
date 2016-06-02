@@ -2,7 +2,7 @@
 
 namespace EvacuationSimulation
 {
-    class FireGrid : MonoBehaviour
+    public class FireGrid : MonoBehaviour
     {
         GameObject[,] fireObjects = new GameObject[5,5];
         GameObject firePrefab;

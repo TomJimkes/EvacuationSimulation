@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace EvacuationSimulation
 {
-    class Agent : MonoBehaviour
+    public class Agent : MonoBehaviour
     {
         private object physicalState;
         private object mentalState;

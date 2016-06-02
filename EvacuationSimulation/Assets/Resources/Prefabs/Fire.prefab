@@ -41,7 +41,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c5cd16463f9894488474c74a5985555, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireSprites: []
+  fireSprites:
+  - {fileID: 21300000, guid: aed29ec3cdaac1c4dbec93269436dce5, type: 3}
+  - {fileID: 21300000, guid: 87466286481dac04c848c7a3d8ccb25a, type: 3}
+  - {fileID: 21300000, guid: a86f6c9c23529e248a46a9cc14e561ff, type: 3}
 --- !u!212 &21207856
 SpriteRenderer:
   m_ObjectHideFlags: 1

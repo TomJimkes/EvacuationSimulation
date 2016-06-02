@@ -27,7 +27,7 @@ namespace EvacuationSimulation
         }
 
         //Data manipulators
-        public void ExpandMentalMap(Floor floor)
+        public void ExpandMentalMap(MentalFloor floor)
         {
 
             //For each node, set certainty to highest of the two (same for edges)

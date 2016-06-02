@@ -6,6 +6,7 @@ using System.Threading;
 
 namespace EvacuationSimulation
 {
+
     public class Floor
     {
         FloorGraph fGraph;

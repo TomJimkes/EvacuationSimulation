@@ -12,7 +12,7 @@ namespace EvacuationSimulation
         FloorGraph fGraph;
         FloorGrid fGrid;
 
-        public CentralFloor()
+        void Start()
         {
             createGrid();
             createGraph();
@@ -30,7 +30,7 @@ namespace EvacuationSimulation
         }
 
         //Create grid
-        public static void createGrid()
+        private void createGrid()
         {
             //Read from file
             //build grid

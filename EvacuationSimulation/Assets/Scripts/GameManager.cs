@@ -14,10 +14,12 @@ public class GameManager : MonoBehaviour
 	void Start () {
 	    
         //load floor grid
-        CentralFloor.createGrid();
+	    this.gameObject.AddComponent<CentralFloor>();
+
+	    //spawn initial fire somewhere
 
 
-        //spawn initial fire somewhere
+	    //spawn agents somewhere
 	}
 	
 	// Update is called once per frame

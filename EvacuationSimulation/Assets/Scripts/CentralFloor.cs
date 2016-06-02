@@ -36,11 +36,19 @@ namespace EvacuationSimulation
             //build grid
             Texture2D map = Resources.Load<Texture2D>("Maps/test");
             int dim = map.height;
-            Color[] pixels = map.GetPixels();
+            Color32[] pixels = map.GetPixels32();
 
-            //Each type of tile has its own color
-            //flammability is defined by opacity
+            Color32[,] trueGrid = new Color32[dim,dim];
 
+            //getpixels goes from bottom to top and left to right
+            //our spatial reasoning is from top to bottom and from left to right
+            for(int i = 0; i < pixels.Length; i++)
+            {
+                int column = i % dim;
+                int row = dim - (i / dim);
+                trueGrid[row, column] = pixels[i];
+            }
+            
         }
         //Build graph
         private void createGraph()

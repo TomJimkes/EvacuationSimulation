@@ -5,11 +5,19 @@ using System.Text;
 
 namespace EvacuationSimulation
 {
-    class FloorGraphNode
+    public class FloorGraphNode
     {
-        int id;
+        public int id;
         List<int> incident;
+        List<int> edges;
         int certainty;
+        
+        //pathfinding variables
+        public float F;
+        public float G;
+        public float H;  // f = gone + heuristic
+        public int parent;
+        public int X, Y;
 
         public FloorGraphNode(int id, List<int> incident, int certainty = 1)
         {
@@ -22,6 +30,12 @@ namespace EvacuationSimulation
         public List<int> GetIncident
         {
             get { return incident; }
+        }
+
+        //Getters Setters
+        public List<int> GetEdges
+        {
+            get { return edges; }
         }
 
     }

@@ -85,9 +85,12 @@ namespace EvacuationSimulation
         #endregion
 
         #region Variables Declaration
+        private FloorGraph                      mGraph                  = null;
         private bool[,]                         mGrid                   = null;
         private PriorityQueueB<PathFinderNode>  mOpen                   = new PriorityQueueB<PathFinderNode>(new ComparePFNode());
         private List<PathFinderNode>            mClose                  = new List<PathFinderNode>();
+        private PriorityQueueB<FloorGraphNode>  mGraphOpen              = new PriorityQueueB<FloorGraphNode>(new CompareGraphPFNode());
+        private List<FloorGraphNode>            mGraphClose             = new List<FloorGraphNode>();
         private bool                            mStop                   = false;
         private bool                            mStopped                = true;
         private int                             mHoriz                  = 0;
@@ -110,6 +113,14 @@ namespace EvacuationSimulation
                 throw new Exception("Grid cannot be null");
 
             mGrid = grid;
+        }
+
+        public PathFinder(FloorGraph graph)
+        {
+            if (graph == null)
+                throw new Exception("Graph cannot be null");
+
+            mGraph = graph;
         }
         #endregion
 
@@ -184,6 +195,131 @@ namespace EvacuationSimulation
         public void FindPathStop()
         {
             mStop = true;
+        }
+
+        public List<FloorGraphNode> FindPathGraph(FloorGraphNode start, FloorGraphNode end)
+        {
+            FloorGraphNode parentNode = start;
+            bool found = false;
+            mStop = false;
+            mStopped = false;
+            mOpen.Clear();
+            mClose.Clear();
+
+            parentNode.G = 0;
+            parentNode.H = mHEstimate;
+            parentNode.F = parentNode.G + parentNode.H;
+            parentNode.parent = parentNode.id;
+
+            mGraphOpen.Push(parentNode);
+            while ( mGraphOpen.Count > 0 && !mStop )
+            {
+                parentNode = mGraphOpen.Pop();
+
+                if (parentNode == end)
+                {
+                    mGraphClose.Add(parentNode);
+                    found = true;
+                    break;
+                }
+
+                if (mClose.Count > mSearchLimit)
+                {
+                    mStopped = true;
+                    return null;
+                }
+
+                for (int i = 0; i < parentNode.GetIncident.Count; i++)
+                {
+                    FloorGraphNode newNode = mGraph.GetFloorGraphNode(parentNode.GetIncident[i]);
+                    
+                    //find corresponding edge
+                    FloorGraphEdge e = null;
+                    List<int> edges = parentNode.GetEdges;
+                    bool foundMathcingEdge = false;
+
+                    foreach ( int E in edges )
+                    {
+                        if ( !foundMathcingEdge )
+                        {
+                            e = mGraph.GetFloorGraphEdge( E );
+                            if ( ( e.GetDestination == parentNode.id && e.GetOrigin == newNode.id ) || ( e.GetDestination == newNode.id && e.GetOrigin == parentNode.id ) )
+                                foundMathcingEdge = true;
+                        }
+                        else
+                            break;
+                    }
+
+                    float newG = e.expectedLength;
+
+                    if (newG == parentNode.G)
+                    {
+                        //Unbrekeable
+                        continue;
+                    }
+
+                    int foundInOpenIndex = -1;
+                    for (int j = 0; j < mGraphOpen.Count; j++)
+                    {
+                        if (mGraphOpen[j] == newNode)
+                        {
+                            foundInOpenIndex = j;
+                            break;
+                        }
+                    }
+                    if (foundInOpenIndex != -1 && mGraphOpen[foundInOpenIndex].G <= newG)
+                        continue;
+
+                    int foundInCloseIndex = -1;
+                    for (int j = 0; j < mGraphClose.Count; j++)
+                    {
+                        if (mGraphClose[j] == newNode )
+                        {
+                            foundInCloseIndex = j;
+                            break;
+                        }
+                    }
+                    if (foundInCloseIndex != -1 && mGraphClose[foundInCloseIndex].G <= newG)
+                        continue;
+
+                    newNode.parent = parentNode.id;
+                    newNode.G = newG;
+
+                    newNode.H = mHEstimate * (Math.Abs(newNode.X - end.X) + Math.Abs(newNode.Y - end.Y));
+                    newNode.F = newNode.G + newNode.H;
+
+
+                    //It is faster if we leave the open node in the priority queue
+                    //When it is removed, all nodes around will be closed, it will be ignored automatically
+                    //if (foundInOpenIndex != -1)
+                    //    mOpen.RemoveAt(foundInOpenIndex);
+
+                    //if (foundInOpenIndex == -1)
+                    mGraphOpen.Push(newNode);
+                }
+
+                mGraphClose.Add(parentNode);
+            }
+
+            mCompletedTime = HighResolutionTime.GetTime();
+            if (found)
+            {
+                FloorGraphNode fNode = mGraphClose[mGraphClose.Count - 1];
+                for (int i = mGraphClose.Count - 1; i >= 0; i--)
+                {
+                    if (fNode == mGraphClose[i] || i == mClose.Count - 1)
+                    {
+                        fNode = mGraphClose[i];
+                    }
+                    else
+                        mClose.RemoveAt(i);
+                }
+                mStopped = true;
+                return mGraphClose;
+            }
+            mStopped = true;
+            return null;
+
         }
 
         public List<PathFinderNode> FindPath(Point start, Point end)
@@ -410,6 +546,20 @@ namespace EvacuationSimulation
         {
             #region IComparer Members
             public int Compare(PathFinderNode x, PathFinderNode y)
+            {
+                if (x.F > y.F)
+                    return 1;
+                else if (x.F < y.F)
+                    return -1;
+                return 0;
+            }
+            #endregion
+        }
+
+        internal class CompareGraphPFNode : IComparer<FloorGraphNode>
+        {
+            #region IComparer Members
+            public int Compare(FloorGraphNode x, FloorGraphNode y)
             {
                 if (x.F > y.F)
                     return 1;

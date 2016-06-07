@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace EvacuationSimulation
 {
-    class FloorGraph
+    public class FloorGraph
     {
         Dictionary<int, FloorGraphNode> nodes;
         Dictionary<int, FloorGraphEdge> edges;
@@ -22,6 +22,18 @@ namespace EvacuationSimulation
         public void AddNode(int id, List<int> incidentEdges)
         {
             nodes.Add(id, new FloorGraphNode(id, incidentEdges));
+        }
+
+        //returns node based on ID
+        public FloorGraphNode GetFloorGraphNode( int id )
+        {
+            return nodes[ id ];
+        }
+
+        //returns edge based on ID
+        public FloorGraphEdge GetFloorGraphEdge(int id)
+        {
+            return edges[id];
         }
 
         //Remove a node from the graph

@@ -5,12 +5,13 @@ using System.Text;
 
 namespace EvacuationSimulation
 {
-    class FloorGraphEdge
+    public class FloorGraphEdge
     {
         int id;
         int origin;
         int destination;
         int certainty;
+        public float expectedLength;
 
         public FloorGraphEdge(int id, int origin, int destination, int certainty = 1)
         {

@@ -21,6 +21,7 @@ namespace EvacuationSimulation
             this.destination = destination;
             this.certainty = certainty;
             this.live = live;
+            this.room = room;
         }
 
         //Getters Setters

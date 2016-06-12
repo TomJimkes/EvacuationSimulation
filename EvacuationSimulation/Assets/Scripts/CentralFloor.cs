@@ -13,10 +13,13 @@ namespace EvacuationSimulation
         FloorGrid fGrid;
         int dim;
 
+        //Used for construction
+        int centralID;
+
         void Start()
         {
-            createGrid();
-            //createGraph();
+            Color32[,] grid = createGrid();
+            createGraph(grid);
         }
 
         //Getters setters
@@ -31,11 +34,11 @@ namespace EvacuationSimulation
         }
 
         //Create grid
-        private void createGrid()
+        private Color32[,] createGrid()
         {
             //Read from file
             //build grid
-            Texture2D map = Resources.Load<Texture2D>("Maps/test");
+            Texture2D map = Resources.Load<Texture2D>("Maps/Test2");
             dim = map.height;
             Color32[] pixels = map.GetPixels32();
 
@@ -54,7 +57,7 @@ namespace EvacuationSimulation
             var floorGameObject = Instantiate(floorPrefab);
             fGrid = floorGameObject.GetComponent<FloorGrid>();
             floorGameObject.GetComponent<FloorGrid>().grid = trueGrid;
-
+            return trueGrid;
         }
         //Build graph
         private void createGraph(Color32[,] map)
@@ -72,13 +75,13 @@ namespace EvacuationSimulation
                 for(int j = 0; j < dim; j++)
                 {
                     int sum = map[i, j].r + map[i, j].g + map[i, j].b;
-                    if (sum == 0)
+                    if (sum == 765) //White
                     { abs[i, j] = 0; }
-                    else if (sum == 765 || sum == map[i, j].b)
+                    else if (sum == 0 || sum == map[i, j].b) //Black/blue
                     { abs[i, j] = 1; }
-                    else if (sum == 384)
+                    else if (sum == 381) //Grey
                     { abs[i, j] = 3; }
-                    else
+                    else //Yellow/Red
                     { abs[i, j] = 2; }
                 }
             }
@@ -92,7 +95,7 @@ namespace EvacuationSimulation
             //The counting of rooms starts at 1, 0 is outside
             int room = 1;
             //Node id's also start from 1
-            int centralID = 1;
+            centralID = 1;
 
             for (int i = 0; i < dim; i++)
             {
@@ -101,12 +104,25 @@ namespace EvacuationSimulation
                     if (abs[i, j] == 0)
                     {
                         //Create a grid with door id's, types and adjacencies
-                        floodSearch(abs, i, j, found, room, centralID);
+                        floodSearch(abs, i, j, found, room);
                         room++;
                     }
                 }
             }
 
+            //TEST
+            for(int i = 0; i < dim; i++)
+            {
+                string s = "";
+                for(int j = 0; j < dim; j++)
+                {
+                    s += found[i, j, 0];
+                }
+                print(s);
+            }
+
+            createFromFound(found);
+            //ENDTEST
             //Now we have a grid with door id's, adjacencies and types
             
             
@@ -114,8 +130,8 @@ namespace EvacuationSimulation
 
         //A recursive floodsearch algorithm for creating a graph from the grid
         //The j and i variables are used to find empty spaces to start the algorithm on
-        //these will be increased in each run of the algorithm
-        private void floodSearch(int[,] map, int i, int j, int[,,] found, int room, int centralID)
+        //these will be increased in each run of the algorithm //TS
+        private void floodSearch(int[,] map, int i, int j, int[,,] found, int room)
         {
             if (i >= dim || i < 0 || j >= dim || j < 0)
                 return;
@@ -123,61 +139,93 @@ namespace EvacuationSimulation
             switch (map[i, j])
             {
                 case 0: { map[i, j] = 4; break; }
-                case 2: { centralID = doorFound(i, j, found, room, centralID, 2); break; } 
-                case 3: { centralID = doorFound(i, j, found, room, centralID, 3); break; }
+                case 2: { doorFound(i, j, found, map, room, 2); return; } 
+                case 3: { doorFound(i, j, found, map, room, 3); return; }
                 default: { return ; }
             }
 
             //recurse on all 4 adjacent neighbours
-            floodSearch(map, i + 1, j, found, room, centralID);
-            floodSearch(map, i - 1, j, found, room, centralID);
-            floodSearch(map, i, j + 1, found, room, centralID);
-            floodSearch(map, i, j - 1, found, room, centralID);
+            floodSearch(map, i, j + 1, found, room);
+            floodSearch(map, i, j - 1, found, room);
+            floodSearch(map, i + 1, j, found, room);
+            floodSearch(map, i - 1, j, found, room);
         }
 
-        //If a door is found in the grid
-        private int doorFound(int i, int j, int[,,] found, int room, int centralID, int type)
+        //If a door is found in the grid //TS
+        private void doorFound(int i, int j, int[,,] found, int[,]map, int room, int type)
         {
             if (found[i, j, 0] != 0) //If already has an ID
             {
-                found[i, j, 2] = room;
+                if(!(found[i, j, 1] == room))
+                    found[i, j, 2] = room;
             }
             else
             {
-                if (adjID(found, i, j) != -1)
-                    found[i, j, 2] = adjID(found, i, j);
-                else
-                {
-                    found[i, j, 0] = centralID;
-                    found[i, j, 1] = room;
-                    found[i, j, 3] = type;
-                    centralID++;
-                }
-            }
-            return centralID;
-        }
+                List<int[]> door = new List<int[]>();
+                int count = 1;
+                door.Add(new int[] { i, j });
 
-        //If an adjacent square has a door field that already has an ID
-        private int adjID(int[,,] found, int i, int j)
-        {
-            for(int x = -1; i <= 1; i++)
-            {
-                for(int y = -1; j <= 1; j++)
+                //find all coordinates that are part of the door, find the right id
+                if(j + count < dim && map[i, j + count] == type) //If we find a piece of door in j+1, iterate
                 {
-                    int dX = i + x;
-                    int dY = j + y;
-                    if(!(dY < 0 || dX < 0 || dY >= dim || dX >= dim))
+                    while(map[i, j + count] == type) //While we are still on a door square
                     {
-                        if (found[dX, dY, 0] != 0)
-                            return found[dX, dY, 0];
+                        door.Add(new int[] { i, j + count });
+                        count++;
+                        if (j + count >= dim)
+                            break;
+                        
                     }
+                    count = 1;
                 }
-            }
+                if (i + count < dim && map[i + count, j] == type)
+                {
+                    while (map[i + count, j] == type)
+                    {
+                        door.Add(new int[] { i + count, j});
+                        count++;
+                        if (i + count >= dim)
+                            break;
+                        
+                    }
+                    count = 1;
+                }
+                if (j - count >= 0 && map[i, j - count] == type)
+                {
+                    while (map[i, j - count] == type)
+                    {
+                        door.Add(new int[] { i, j - count });
+                        count++;
+                        if (j - count < 0)
+                            break;
+                        
+                    }
+                    count = 1;
+                }
+                if (i - count >= 0 && map[i - count, j] == type)
+                {
+                    while (map[i - count, j] == type)
+                    {
+                        door.Add(new int[] { i - count, j });
+                        count++;
+                        if (i - count < 0)
+                            break;
+                    }
+                    count = 1;
+                }
 
-            return -1;
+                //Set all values of the door in the found 
+                for(int n = 0; n < door.Count; n++)
+                {
+                    found[door[n][0], door[n][1], 0] = centralID;
+                    found[door[n][0], door[n][1], 1] = room;
+                    found[door[n][0], door[n][1], 3] = type;
+                }
+                centralID++;
+            }
         }
         
-        //We have an augmented grid of doors and exits, with this, we can build a graph
+        //We have an augmented grid of doors and exits, with this, we can build a graph //TS
         private void createFromFound(int[,,] found)
         {
             Dictionary<int, List<int>> roomsPerDoor = new Dictionary<int, List<int>>();
@@ -193,6 +241,7 @@ namespace EvacuationSimulation
                         if(!roomsPerDoor.ContainsKey(id))
                         {
                             roomsPerDoor.Add(id, new List<int> { found[i, j, 1], found[i, j, 2] });
+                            typePerDoor.Add(id, found[i, j, 3]);
                             if(!(doorsPerRoom.ContainsKey(found[i, j, 1])))
                             {
                                 doorsPerRoom.Add(found[i, j, 1], new List<int> { id });
@@ -213,7 +262,7 @@ namespace EvacuationSimulation
                     }
                 }
             }
-
+            string s = "";
             //After we have built the two new datastructures, we can finally create the graph using DFS
             //TODO: DFS IMPLEMENTATION
         }

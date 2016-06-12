@@ -62,5 +62,11 @@ namespace EvacuationSimulation
         {
             get { return room; }
         }
+
+        //Hard copy
+        public FloorGraphEdge HardCopy()
+        {
+            return new FloorGraphEdge(id, room, origin, destination, certainty, live);
+        }
     }
 }

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace EvacuationSimulation
 {
-    class CentralFloor : MonoBehaviour
+    public class CentralFloor : MonoBehaviour
     {
         FloorGraph fGraph;
         FloorGrid fGrid;
@@ -35,6 +35,8 @@ namespace EvacuationSimulation
         {
             get { return fGrid; }
         }
+
+
 
         //Create grid
         private Color32[,] createGrid()

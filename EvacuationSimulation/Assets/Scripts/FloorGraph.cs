@@ -46,6 +46,11 @@ namespace EvacuationSimulation
             nodes[destination].GetIncident.Add(id);
         }
 
+        public void AddEdge(int id, FloorGraphEdge edge)
+        {
+            edges.Add(id, edge);
+        }
+
         //Remove an edge from the list
         public void RemoveEdge(int id)
         {

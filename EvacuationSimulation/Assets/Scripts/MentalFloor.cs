@@ -149,9 +149,32 @@ namespace EvacuationSimulation
 
         //Search in the central floor object to find out what is behind a certain node
         //TODO add stoachastic variable for observing
-        public void Observe()
+        public void ObserveRoom(int nodeID, CentralFloor floor)
         {
-            //TODO
+            List<int> incident = floor.Graph.Node(nodeID).GetIncident;
+            foreach(int i in incident)
+            {
+                FloorGraphEdge e = floor.Graph.Edge(i);
+                //Add edge
+                if(!(fGraph.Edges.ContainsKey(i)))
+                {
+                    fGraph.AddEdge(e.Id, e.HardCopy());
+                    fGraph.Node(nodeID).GetIncident.Add(i);
+                }
+
+                //Add node
+                int dest = fGraph.Edge(i).GetDestination;
+                if(!fGraph.Nodes.ContainsKey(dest))
+                {
+                    fGraph.AddNode(dest, new List<int> { i });
+                }
+
+                //Add references
+                if (!fGraph.Node(dest).GetIncident.Contains(i))
+                    fGraph.Node(dest).GetIncident.Add(i);
+            }
+
+
         }
     }
 }

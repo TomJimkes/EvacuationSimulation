@@ -15,9 +15,12 @@ namespace EvacuationSimulation
 
         //Used for construction
         int centralID;
+        int centralEdgeId;
 
         void Start()
         {
+            fGraph = new FloorGraph();
+            fGrid = new FloorGrid();
             Color32[,] grid = createGrid();
             createGraph(grid);
         }
@@ -110,22 +113,9 @@ namespace EvacuationSimulation
                 }
             }
 
-            //TEST
-            for(int i = 0; i < dim; i++)
-            {
-                string s = "";
-                for(int j = 0; j < dim; j++)
-                {
-                    s += found[i, j, 0];
-                }
-                print(s);
-            }
-
+            //Create a set of datastructures that can be used by a DFS algorithm to build the graph
             createFromFound(found);
-            //ENDTEST
-            //Now we have a grid with door id's, adjacencies and types
-            
-            
+        
         }
 
         //A recursive floodsearch algorithm for creating a graph from the grid
@@ -230,7 +220,7 @@ namespace EvacuationSimulation
         {
             Dictionary<int, List<int>> roomsPerDoor = new Dictionary<int, List<int>>();
             Dictionary<int, List<int>> doorsPerRoom = new Dictionary<int, List<int>>();
-            Dictionary<int, int> typePerDoor = new Dictionary<int, int>();
+            Dictionary<int, bool> isExit = new Dictionary<int, bool>();
             for(int i = 0; i < dim; i++)
             {
                 for(int j = 0; j < dim; j++)
@@ -241,7 +231,7 @@ namespace EvacuationSimulation
                         if(!roomsPerDoor.ContainsKey(id))
                         {
                             roomsPerDoor.Add(id, new List<int> { found[i, j, 1], found[i, j, 2] });
-                            typePerDoor.Add(id, found[i, j, 3]);
+                            isExit.Add(id, found[i, j, 3] == 2);
                             if(!(doorsPerRoom.ContainsKey(found[i, j, 1])))
                             {
                                 doorsPerRoom.Add(found[i, j, 1], new List<int> { id });
@@ -262,11 +252,48 @@ namespace EvacuationSimulation
                     }
                 }
             }
-            string s = "";
+            
             //After we have built the two new datastructures, we can finally create the graph using DFS
             //TODO: DFS IMPLEMENTATION
+            //Add the first node to the graph
+            fGraph.AddNode(1, new List<int>(), isExit[1]);
+            centralEdgeId = 1;
+            DFSGraphBuilder(roomsPerDoor, doorsPerRoom, isExit, new List<int>());
+
+
+            string s = "";
         }
 
+        //Build the graph using the generated data structures and a DFS algorithm
+        private void DFSGraphBuilder(Dictionary<int, List<int>> roomsPerDoor, Dictionary<int, List<int>> doorsPerRoom, Dictionary<int, bool> isExit, List<int> visited, int door = 1)
+        {
+            visited.Add(door);
+            foreach(int room in roomsPerDoor[door])//foreach connected room
+            {
+                foreach(int child in doorsPerRoom[room]) //for each door in that room
+                {
+                    if(!(visited.Contains(child)))
+                    {
+                        //Creat the node
+                        //Add incoming and outgoing edge between nodes
+                        //recurese on that node
+
+                        fGraph.AddNode(child, new List<int>(), isExit[child]);
+                        int edgeId1 = centralEdgeId++;
+                        int edgeId2 = centralEdgeId++;
+                        fGraph.AddEdge(edgeId1, room, child, door);
+                        fGraph.AddEdge(edgeId2, room, door, child);
+                        fGraph.Node(door).GetIncident.Add(edgeId1);
+                        fGraph.Node(door).GetIncident.Add(edgeId2);
+                        fGraph.Node(child).GetIncident.Add(edgeId1);
+                        fGraph.Node(child).GetIncident.Add(edgeId2);
+
+                        //Recurse on child
+                        DFSGraphBuilder(roomsPerDoor, doorsPerRoom, isExit, visited, child);
+                    }
+                }
+            }
+        }
 
     }
 }

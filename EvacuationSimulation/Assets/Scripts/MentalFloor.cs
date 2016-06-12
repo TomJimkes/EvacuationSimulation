@@ -100,7 +100,7 @@ namespace EvacuationSimulation
                         extGraph.AddEdge(extGraph.Edges[e].Id, extGraph.Edges[e].Room ,extGraph.Edges[e].GetOrigin, extGraph.Edges[e].GetDestination, extGraph.Edges[e].Certainty, extGraph.Edges[e].Live);
 
                         //Add destination node to iNodes
-                        fGraph.AddNode(destNode, new List<int>(), extGraph.Nodes[destNode].Certainty, extGraph.Nodes[destNode].Live);
+                        fGraph.AddNode(destNode, new List<int>(), extGraph.Nodes[destNode].Exit, extGraph.Nodes[destNode].Certainty, extGraph.Nodes[destNode].Live);
 
                         //Recurse on destination
                         DFSExpand(extGraph, destNode);
@@ -137,7 +137,7 @@ namespace EvacuationSimulation
                 {
                     incident.Add(i);
                 }
-                fGraph.AddNode(pair.Value.Id, incident, pair.Value.Certainty, pair.Value.Live);
+                fGraph.AddNode(pair.Value.Id, incident, pair.Value.Exit, pair.Value.Certainty, pair.Value.Live);
             }
 
             //Add edges

@@ -19,9 +19,9 @@ namespace EvacuationSimulation
         }
 
         //Add a node to the graph
-        public void AddNode(int id, List<int> incidentEdges, int certainty = 1, bool live = true, bool exit = true)
+        public void AddNode(int id, List<int> incidentEdges, bool exit = true, int certainty = 1, bool live = true)
         {
-            nodes.Add(id, new FloorGraphNode(id, incidentEdges, certainty, live, exit));
+            nodes.Add(id, new FloorGraphNode(id, incidentEdges, exit, certainty, live));
         }
 
         //Remove a node from the graph

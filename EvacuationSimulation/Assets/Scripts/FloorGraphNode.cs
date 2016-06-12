@@ -13,7 +13,7 @@ namespace EvacuationSimulation
         bool live; //Indicates wether a node is accessible, or if it was removed from the mental map (due to obstruction)
         bool exit;
 
-        public FloorGraphNode(int id, List<int> incident, int certainty = 1, bool live = true, bool exit = false)
+        public FloorGraphNode(int id, List<int> incident, bool exit = false, int certainty = 1, bool live = true)
         {
             this.id = id;
             this.incident = incident;
@@ -45,5 +45,9 @@ namespace EvacuationSimulation
             set { live = value; }
         }
 
+        public bool Exit
+        {
+            get { return exit; }
+        }
     }
 }

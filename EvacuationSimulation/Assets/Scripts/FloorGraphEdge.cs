@@ -14,7 +14,7 @@ namespace EvacuationSimulation
         bool live;
         int room;
 
-        public FloorGraphEdge(int id, int origin, int destination, int room, int certainty = 1, bool live = true)
+        public FloorGraphEdge(int id, int room, int origin, int destination, int certainty = 1, bool live = true)
         {
             this.id = id;
             this.origin = origin;

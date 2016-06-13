@@ -7,11 +7,19 @@ namespace EvacuationSimulation
 {
     public class FloorGraphNode
     {
-        int id;
+        public int id;
         List<int> incident;
+        List<int> edges;
         int certainty;
         bool live; //Indicates wether a node is accessible, or if it was removed from the mental map (due to obstruction)
         bool exit;
+        
+        //pathfinding variables
+        public float F;
+        public float G;
+        public float H;  // f = gone + heuristic
+        public int parent;
+        public int X, Y;
 
         public FloorGraphNode(int id, List<int> incident, bool exit = false, int certainty = 1, bool live = true)
         {
@@ -26,6 +34,12 @@ namespace EvacuationSimulation
         public List<int> GetIncident
         {
             get { return incident; }
+        }
+
+        //Getters Setters
+        public List<int> GetEdges
+        {
+            get { return edges; }
         }
 
         public int Id

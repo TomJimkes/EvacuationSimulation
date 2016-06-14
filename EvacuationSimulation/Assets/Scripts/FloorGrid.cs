@@ -7,9 +7,12 @@ namespace EvacuationSimulation
     public class FloorGrid : MonoBehaviour
     {
         public Color32[,] grid;
+        public PathFinder PathFinder;
 
         void Start()
         {
+            var pathfindGrid = new bool[grid.GetLength(0), grid.GetLength(1)];
+
             GameObject[] tilePrefabs = new GameObject[3];
             tilePrefabs[0] = Resources.Load<GameObject>("Prefabs/Floortile");
             tilePrefabs[1] = Resources.Load<GameObject>("Prefabs/Walltile");
@@ -26,6 +29,7 @@ namespace EvacuationSimulation
                             t = Instantiate(tilePrefabs[1]);
                             break;
                         default:
+                            pathfindGrid[x, y] = true;
                             t = Instantiate(tilePrefabs[0]);
                             break;
                     }
@@ -33,6 +37,8 @@ namespace EvacuationSimulation
                     t.transform.parent = transform;
                 }
             }
+
+            PathFinder = new PathFinder(pathfindGrid);
         }
     }
 }

@@ -9,10 +9,13 @@ public class GameManager : MonoBehaviour
     public FireGrid RealFireGrid;
     public List<Firefighter> Firemen = new List<Firefighter>();
     public List<Civilian> Civilians = new List<Civilian>();
+    public static GameManager Instance;
 
 	// Use this for initialization
-	void Start () {
-	    
+	void Awake ()
+	{
+	    Instance = this.gameObject.GetComponent<GameManager>();
+
         //load floor grid
 	    this.gameObject.AddComponent<CentralFloor>();
 

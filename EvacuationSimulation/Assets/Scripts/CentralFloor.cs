@@ -43,7 +43,7 @@ namespace EvacuationSimulation
         {
             //Read from file
             //build grid
-            Texture2D map = Resources.Load<Texture2D>("Maps/Test2");
+            Texture2D map = Resources.Load<Texture2D>("Maps/BiggerMap");
             dim = map.height;
             Color32[] pixels = map.GetPixels32();
 
@@ -82,14 +82,27 @@ namespace EvacuationSimulation
                     int sum = map[i, j].r + map[i, j].g + map[i, j].b;
                     if (sum == 765) //White
                     { abs[i, j] = 0; }
-                    else if (sum == 0 || sum == map[i, j].b) //Black/blue
-                    { abs[i, j] = 1; }
-                    else if (sum == 381) //Grey
-                    { abs[i, j] = 3; }
-                    else //Yellow/Red
+                    else if(sum == map[i,j].r || sum == (map[i,j].r + map[i,j].g) && sum > 0)//Yellow/Red
                     { abs[i, j] = 2; }
+                    else if (sum == 384) //Grey
+                    { abs[i, j] = 3; }
+                    else //Black/blue
+                    { abs[i, j] = 1; }
+
                 }
             }
+
+            //TEST
+            for(int i = 0; i < dim; i++)
+            {
+                string s = "";
+                for(int j = 0; j < dim; j++)
+                {
+                    s += abs[i, j];
+                }
+                print(s);
+            }
+            //TEST
 
             //TODO, we keep a central array oject containing coordinates with a door id, and two integers representing adjacent rooms 
             int[,,] found = new int[dim,dim,4]; //The last index indicates wether it is a door or and exit

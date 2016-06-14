@@ -9,6 +9,8 @@ namespace EvacuationSimulation
     {
         FloorGraph fGraph;
         FloorGrid fGrid;
+        //Agents and their last know locations
+        //
 
         public MentalFloor()
         {
@@ -148,7 +150,7 @@ namespace EvacuationSimulation
         }
 
         //Search in the central floor object to find out what is behind a certain node
-        //TODO add stoachastic variable for observing
+        //TODO add stoachastic variable for observing --> approximated edge length and 
         public void ObserveRoom(int nodeID, CentralFloor floor)
         {
             List<int> incident = floor.Graph.Node(nodeID).GetIncident;
@@ -176,5 +178,26 @@ namespace EvacuationSimulation
 
 
         }
+
+        //TODO observe grid
+        public void ObserveGrid(int x, int y, CentralFloor floor /* extra params for fear */)
+        {
+            int r = 0; //ViewRadius
+            FloorGrid eGrid = floor.Grid;
+            //Potentially simplify --> Observe a square
+
+
+            //Get the grid from the centralfloor
+            //Observe everything in a certain radius, while not going through walls
+                //flood fill to a certain eucledian distance? --> allows the agent to look around corners
+                //Square of width and height 2r, collision check for each squah (expensive??)
+                //Create a spiral that either observes/does not observe if it hits a wall
+            //Smoke decreases this radius
+            //Panic decreases this radius
+
+            //TODO: colision detection (walls) --> talk about this with timon
+            //If a door is found --> perform collision detection for walls AND objects 
+        }
+
     }
 }

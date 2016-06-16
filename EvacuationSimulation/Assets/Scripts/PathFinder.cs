@@ -32,6 +32,7 @@ namespace EvacuationSimulation
         public int     Y;
         public int     PX; // Parent
         public int     PY;
+
         #endregion
     }
 
@@ -85,8 +86,9 @@ namespace EvacuationSimulation
         #endregion
 
         #region Variables Declaration
-        private FloorGraph                      mGraph                  = null;
-        private bool[,]                         mGrid                   = null;
+        public FloorGraph 
+            mGraph                  = null;
+        public bool[,]                          mGrid                   = null;
         private PriorityQueueB<PathFinderNode>  mOpen                   = new PriorityQueueB<PathFinderNode>(new ComparePFNode());
         private List<PathFinderNode>            mClose                  = new List<PathFinderNode>();
         private PriorityQueueB<FloorGraphNode>  mGraphOpen              = new PriorityQueueB<FloorGraphNode>(new CompareGraphPFNode());
@@ -225,6 +227,7 @@ namespace EvacuationSimulation
 
                 if (mClose.Count > mSearchLimit)
                 {
+
                     mStopped = true;
                     return null;
                 }
@@ -336,6 +339,8 @@ namespace EvacuationSimulation
             mOpen.Clear();
             mClose.Clear();
 
+            bool[,] discovered = new bool[gridX+1, gridY+1];
+
             #if DEBUGON
             if (mDebugProgress && PathFinderDebug != null)
                 PathFinderDebug(0, 0, start.X, start.Y, PathFinderNodeType.Start, -1, -1);
@@ -344,9 +349,9 @@ namespace EvacuationSimulation
             #endif
 
             sbyte[,] direction;
-            if (mDiagonals)
-                direction = new sbyte[8,2]{ {0,-1} , {1,0}, {0,1}, {-1,0}, {1,-1}, {1,1}, {-1,1}, {-1,-1}};
-            else
+            //if (mDiagonals)
+                //direction = new sbyte[8,2]{ {0,-1} , {1,0}, {0,1}, {-1,0}, {1,-1}, {1,1}, {-1,1}, {-1,-1}};
+            //else
                 direction = new sbyte[4,2]{ {0,-1} , {1,0}, {0,1}, {-1,0}};
 
             parentNode.G         = 0;
@@ -356,6 +361,8 @@ namespace EvacuationSimulation
             parentNode.Y         = start.Y;
             parentNode.PX        = parentNode.X;
             parentNode.PY        = parentNode.Y;
+
+
             mOpen.Push(parentNode);
             while(mOpen.Count > 0 && !mStop)
             {
@@ -373,26 +380,30 @@ namespace EvacuationSimulation
                     break;
                 }
 
-                if (mClose.Count > mSearchLimit)
+                if (mClose.Count > 8000) //mSearchLimit)
                 {
                     mStopped = true;
                     return null;
                 }
 
+                /*
                 if (mPunishChangeDirection)
                     mHoriz = (parentNode.X - parentNode.PX);
+                */
 
                 //Lets calculate all successors
                 //for (int i=0; i<(mDiagonals ? 8 : 4); i++)
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 4; i++)
                 {
                     PathFinderNode newNode;
                     newNode.X = parentNode.X + direction[i,0];
                     newNode.Y = parentNode.Y + direction[i,1];
 
-                    if (newNode.X < 0 || newNode.Y < 0 || newNode.X > gridX || newNode.Y > gridY || !mGrid[newNode.X, newNode.Y])
+                    if ( newNode.X < 0 || newNode.Y < 0 || newNode.X > gridX || newNode.Y > gridY || !mGrid[newNode.X, newNode.Y])
+                       continue;
+                    if (discovered[newNode.X, newNode.Y])
                         continue;
-                    
+
                     float newG;
                     if (i>3)
                         newG = parentNode.G + 1.41f;
@@ -500,7 +511,8 @@ namespace EvacuationSimulation
                     //    mOpen.RemoveAt(foundInOpenIndex);
 
                     //if (foundInOpenIndex == -1)
-                        mOpen.Push(newNode);
+                    discovered[ newNode.X, newNode.Y ] = true;
+                    mOpen.Push(newNode);
                 }
 
                 mClose.Add(parentNode);

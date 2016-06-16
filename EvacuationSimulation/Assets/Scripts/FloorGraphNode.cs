@@ -20,6 +20,7 @@ namespace EvacuationSimulation
         public float H;  // f = gone + heuristic
         public int parent;
         public int X, Y;
+        public bool dicovered, explored;
 
         public FloorGraphNode(int id, List<int> incident, bool exit = false, int certainty = 1, bool live = true)
         {
@@ -28,6 +29,8 @@ namespace EvacuationSimulation
             this.certainty = certainty;
             this.live = live;
             this.exit = exit;
+            dicovered = false;
+            explored = false;
         }
 
         //Getters Setters

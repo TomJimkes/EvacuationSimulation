@@ -19,7 +19,7 @@ namespace EvacuationSimulation
         void Update()
         {
             time += Time.deltaTime;
-            if (time > 1)
+            if (time > 2)
             {
                 UpdateFire();
                 time = 0;
@@ -35,7 +35,11 @@ namespace EvacuationSimulation
                     var surrounding = GetSurroundingSquares(fireObject.transform.localPosition);
                     foreach (var surroundingSquare in surrounding)
                     {
-                        if (this[surroundingSquare] == null && Random.value > 0.92)
+                        var burnability =
+                            1 - GameManager.Instance.RealFloorGrid.grid[(int)surroundingSquare.x, (int)surroundingSquare.y].a / 255;
+                        var distance = 
+                            1 - Vector2.Distance(fireObject.transform.localPosition, surroundingSquare) / 2.5;
+                        if (this[surroundingSquare] == null && Random.value < distance * burnability * 0.1)
                             CreateFire(surroundingSquare);
 
                     }

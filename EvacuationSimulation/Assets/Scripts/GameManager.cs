@@ -20,10 +20,16 @@ public class GameManager : MonoBehaviour
 	    this.gameObject.AddComponent<CentralFloor>();
 
 	    //spawn initial fire somewhere
-
+	    this.gameObject.AddComponent<FireGrid>();
 
 	    //spawn agents somewhere
 	}
+
+    void Start()
+    {
+        RealFloorGrid = gameObject.GetComponent<CentralFloor>().Grid;
+        RealFireGrid = gameObject.GetComponent<FireGrid>();
+    }
 	
 	// Update is called once per frame
 	void Update () {

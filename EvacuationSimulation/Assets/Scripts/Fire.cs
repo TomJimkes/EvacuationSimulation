@@ -3,7 +3,7 @@
 public class Fire : MonoBehaviour
 {
     private float time;
-    private int state = 1;
+    public int state = 1;
     public Sprite[] fireSprites;
 
     // Use this for initialization
@@ -16,12 +16,12 @@ public class Fire : MonoBehaviour
     void Update()
     {
         time += Time.deltaTime;
-        if (time > 4)
+        if (time > 10)
         {
             state = 2;
             GetComponent<SpriteRenderer>().sprite = fireSprites[1];
         }
-        if (time > 10 && state == 2)
+        if (time > 25 && state == 2)
         {
             state = 3;
             GetComponent<SpriteRenderer>().sprite = fireSprites[2];

@@ -39,7 +39,7 @@ namespace EvacuationSimulation
                             1 - GameManager.Instance.RealFloorGrid.grid[(int)surroundingSquare.x, (int)surroundingSquare.y].a / 255;
                         var distance = 
                             1 - Vector2.Distance(fireObject.transform.localPosition, surroundingSquare) / 2.5;
-                        if (this[surroundingSquare] == null && Random.value < distance * burnability * 0.1)
+                        if (Random.value < distance * burnability * 0.1)
                             CreateFire(surroundingSquare);
 
                     }
@@ -52,7 +52,7 @@ namespace EvacuationSimulation
             var f = Instantiate(firePrefab);
             f.transform.localPosition = location;
             f.transform.parent = transform;
-            fireObjects[(int)location.x, (int)location.y] = f;
+            this[location] = f;
         }
 
         List<Vector2> GetSurroundingSquares(Vector2 square)
@@ -65,7 +65,7 @@ namespace EvacuationSimulation
                     var current = new Vector2(square.x + x, square.y + y);
                     if (Vector2.Distance(square, current) > 2.5)
                         continue;
-                    if (x == 0 && y == 0)
+                    if (this[current] != null)
                         continue;
                     if (current.x < 0 || current.x > fireObjects.GetLength(0) - 1)
                         continue;
@@ -81,6 +81,7 @@ namespace EvacuationSimulation
         GameObject this[Vector2 v]
         {
             get { return fireObjects[(int)v.x, (int)v.y]; }
+            set { fireObjects[(int) v.x, (int) v.y] = value; }
         }
 
         GameObject this[int x, int y]

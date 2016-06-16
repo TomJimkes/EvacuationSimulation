@@ -13,7 +13,6 @@ namespace EvacuationSimulation
         private object mentalState;
         private Floor mentalMap;
         private List<PathFinderNode> currentPath;
-        private float _angle;
         private float speed = 5f;
         public Vector2 target;
 
@@ -30,7 +29,6 @@ namespace EvacuationSimulation
                 target = Vector2.zero;
             }
 
-            transform.Rotate(new Vector3(0, 0, 1), Angle);
             if (currentPath != null && currentPath.Any())
             {
                 var nextSpace = currentPath.First();
@@ -42,16 +40,6 @@ namespace EvacuationSimulation
                 {
                     currentPath.Remove(nextSpace);
                 }
-            }
-        }
-
-        public float Angle
-        {
-            get { return _angle; }
-            set
-            {
-                transform.Rotate(new Vector3(0, 0, 1), value - _angle);
-                _angle = value;
             }
         }
     }

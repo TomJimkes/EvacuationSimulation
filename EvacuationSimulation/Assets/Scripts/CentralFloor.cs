@@ -17,10 +17,9 @@ namespace EvacuationSimulation
         int centralID;
         int centralEdgeId;
 
-        void Start()
+        void Awake()
         {
             fGraph = new FloorGraph();
-            fGrid = new FloorGrid();
             Color32[,] grid = createGrid();
             createGraph(grid);
         }

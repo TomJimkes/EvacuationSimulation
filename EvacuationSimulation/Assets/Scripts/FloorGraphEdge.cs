@@ -13,6 +13,7 @@ namespace EvacuationSimulation
         int certainty;
         bool live;
         int room;
+        public float expectedLength;
 
         public FloorGraphEdge(int id, int room, int origin, int destination, int certainty = 1, bool live = true)
         {

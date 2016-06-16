@@ -24,6 +24,18 @@ namespace EvacuationSimulation
             nodes.Add(id, new FloorGraphNode(id, incidentEdges, exit, certainty, live));
         }
 
+        //returns node based on ID
+        public FloorGraphNode GetFloorGraphNode( int id )
+        {
+            return nodes[ id ];
+        }
+
+        //returns edge based on ID
+        public FloorGraphEdge GetFloorGraphEdge(int id)
+        {
+            return edges[id];
+        }
+
         //Remove a node from the graph
         public void RemoveNode(int id)
         {

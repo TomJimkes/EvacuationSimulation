@@ -81,7 +81,7 @@ namespace EvacuationSimulation
 
         #region Methods
         void FindPathStop();
-        List<PathFinderNode> FindPath(Point start, Point end);
+        List<PathFinderNode> FindPath(Point start, Point end, FloorGraphNode targetDoor = null);
         #endregion
 
     }

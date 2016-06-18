@@ -11,7 +11,11 @@ namespace EvacuationSimulation
 
         void Start()
         {
-            var pathfindGrid = new bool[grid.GetLength(0), grid.GetLength(1)];
+            //changed to byte for pathfinding purposes, shouldn't change storage space
+            //0 is impassable
+            //1 is passable
+            //2 is door
+            var pathfindGrid = new byte[grid.GetLength(0), grid.GetLength(1)];
 
             GameObject[] tilePrefabs = new GameObject[3];
             tilePrefabs[0] = Resources.Load<GameObject>("Prefabs/Floortile");
@@ -29,7 +33,7 @@ namespace EvacuationSimulation
                             t = Instantiate(tilePrefabs[1]);
                             break;
                         default:
-                            pathfindGrid[x, y] = true;
+                            pathfindGrid[x, y] = 1;
                             t = Instantiate(tilePrefabs[0]);
                             break;
                     }

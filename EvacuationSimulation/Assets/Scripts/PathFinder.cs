@@ -88,7 +88,7 @@ namespace EvacuationSimulation
         #region Variables Declaration
         public FloorGraph 
             mGraph                  = null;
-        public bool[,]                          mGrid                   = null;
+        public  byte[,]                         mGrid                   = null;
         private PriorityQueueB<PathFinderNode>  mOpen                   = new PriorityQueueB<PathFinderNode>(new ComparePFNode());
         private List<PathFinderNode>            mClose                  = new List<PathFinderNode>();
         private PriorityQueueB<FloorGraphNode>  mGraphOpen              = new PriorityQueueB<FloorGraphNode>(new CompareGraphPFNode());
@@ -109,7 +109,7 @@ namespace EvacuationSimulation
         #endregion
 
         #region Constructors
-        public PathFinder(bool[,] grid)
+        public PathFinder(byte[,] grid)
         {
             if (grid == null)
                 throw new Exception("Grid cannot be null");
@@ -302,7 +302,7 @@ namespace EvacuationSimulation
 
         }
 
-        public List<PathFinderNode> FindPath(Point start, Point end)
+        public List<PathFinderNode> FindPath(Point start, Point end, FloorGraphNode targetDoor = null)
         {
             HighResolutionTime.Start();
 
@@ -348,7 +348,7 @@ namespace EvacuationSimulation
                 #if DEBUGON
                 if (mDebugProgress && PathFinderDebug != null)
                     PathFinderDebug(0, 0, parentNode.X, parentNode.Y, PathFinderNodeType.Current, -1, -1);
-                #endif
+#endif
 
                 if (parentNode.X == end.X && parentNode.Y == end.Y)
                 {
@@ -356,6 +356,21 @@ namespace EvacuationSimulation
                     found = true;
                     break;
                 }
+                else if (targetDoor != null)
+                {
+                    foreach (Point p in targetDoor.doorCoords)
+                    {
+                        if (parentNode.X == p.X && parentNode.Y == p.Y)
+                        {
+                            mClose.Add(parentNode);
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (found == true)
+                    break;
 
                 if (mClose.Count > mSearchLimit)
                 {
@@ -371,7 +386,7 @@ namespace EvacuationSimulation
                     newNode.X = parentNode.X + direction[i,0];
                     newNode.Y = parentNode.Y + direction[i,1];
 
-                    if ( newNode.X < 0 || newNode.Y < 0 || newNode.X > gridX || newNode.Y > gridY || !mGrid[newNode.X, newNode.Y])
+                    if ( newNode.X < 0 || newNode.Y < 0 || newNode.X > gridX || newNode.Y > gridY || mGrid[newNode.X, newNode.Y] == 0)
                        continue;
                     if (discovered[newNode.X, newNode.Y])
                         continue;

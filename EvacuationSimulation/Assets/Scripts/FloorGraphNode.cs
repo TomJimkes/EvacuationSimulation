@@ -10,6 +10,7 @@ namespace EvacuationSimulation
         public int id;
         List<int> incident;
         List<int> edges;
+        public List<Point> doorCoords;
         int certainty;
         bool live; //Indicates wether a node is accessible, or if it was removed from the mental map (due to obstruction)
         bool exit;
@@ -30,6 +31,7 @@ namespace EvacuationSimulation
             this.certainty = certainty;
             this.live = live;
             this.exit = exit;
+            doorCoords = new List<Point>();
         }
 
         //Getters Setters

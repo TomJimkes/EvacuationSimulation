@@ -19,9 +19,9 @@ namespace EvacuationSimulation
         }
 
         //Add a node to the graph
-        public void AddNode(int id, List<int> incidentEdges, bool exit = true, int certainty = 1, bool live = true)
+        public void AddNode(int id, List<int> incident, int x, int y, bool exit = true, int certainty = 1, bool live = true)
         {
-            nodes.Add(id, new FloorGraphNode(id, incidentEdges, exit, certainty, live));
+            nodes.Add(id, new FloorGraphNode(id, incident, x, y, exit, certainty, live));
         }
 
         //returns node based on ID
@@ -94,6 +94,18 @@ namespace EvacuationSimulation
         public Dictionary<int,FloorGraphNode> Nodes
         {
             get { return nodes; }
+        }
+
+        public void AssignExpectedLengths()
+        {
+            foreach (KeyValuePair<int, FloorGraphEdge> kvp in edges)
+            {
+                FloorGraphNode des = nodes[kvp.Value.GetDestination];
+                FloorGraphNode ori = nodes[kvp.Value.GetOrigin];
+
+                kvp.Value.expectedLength = (Math.Abs(des.X - ori.X) + Math.Abs(des.Y - ori.Y));
+            }
+                
         }
     }
 }

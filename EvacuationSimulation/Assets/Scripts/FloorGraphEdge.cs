@@ -64,6 +64,14 @@ namespace EvacuationSimulation
             get { return room; }
         }
 
+        public int OtherSide(int id)
+        {
+            if (id == GetDestination)
+                return GetOrigin;
+            else
+                return GetDestination;
+        }
+
         //Hard copy
         public FloorGraphEdge HardCopy()
         {

@@ -20,7 +20,6 @@ namespace EvacuationSimulation
 
         void Update()
         {
-
             if (target != Vector2.zero && Test)
             {
                 var targetPoint = new Point((int) target.x, (int) target.y);

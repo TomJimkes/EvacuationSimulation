@@ -102,7 +102,7 @@ namespace EvacuationSimulation
         private bool                            mPunishChangeDirection  = false;
         private bool                            mTieBreaker             = false;
         private bool                            mHeavyDiagonals         = false;
-        private int                             mSearchLimit            = 2000;
+        private int                             mSearchLimit            = 8000;
         private double                          mCompletedTime          = 0;
         private bool                            mDebugProgress          = false;
         private bool                            mDebugFoundPath         = false;
@@ -234,26 +234,10 @@ namespace EvacuationSimulation
 
                 for (int i = 0; i < parentNode.GetIncident.Count; i++)
                 {
-                    FloorGraphNode newNode = mGraph.GetFloorGraphNode(parentNode.GetIncident[i]);
-                    
-                    //find corresponding edge
-                    FloorGraphEdge e = null;
-                    List<int> edges = parentNode.GetEdges;
-                    bool foundMathcingEdge = false;
+                    FloorGraphEdge newEdge = mGraph.GetFloorGraphEdge(parentNode.GetIncident[i]);
+                    FloorGraphNode newNode = mGraph.GetFloorGraphNode(newEdge.OtherSide(parentNode.id));
 
-                    foreach ( int E in edges )
-                    {
-                        if ( !foundMathcingEdge )
-                        {
-                            e = mGraph.GetFloorGraphEdge( E );
-                            if ( ( e.GetDestination == parentNode.id && e.GetOrigin == newNode.id ) || ( e.GetDestination == newNode.id && e.GetOrigin == parentNode.id ) )
-                                foundMathcingEdge = true;
-                        }
-                        else
-                            break;
-                    }
-
-                    float newG = e.expectedLength;
+                    float newG = parentNode.G + newEdge.expectedLength;
 
                     if (newG == parentNode.G)
                     {
@@ -291,13 +275,6 @@ namespace EvacuationSimulation
                     newNode.H = mHEstimate * (Math.Abs(newNode.X - end.X) + Math.Abs(newNode.Y - end.Y));
                     newNode.F = newNode.G + newNode.H;
 
-
-                    //It is faster if we leave the open node in the priority queue
-                    //When it is removed, all nodes around will be closed, it will be ignored automatically
-                    //if (foundInOpenIndex != -1)
-                    //    mOpen.RemoveAt(foundInOpenIndex);
-
-                    //if (foundInOpenIndex == -1)
                     mGraphOpen.Push(newNode);
                 }
 
@@ -310,12 +287,12 @@ namespace EvacuationSimulation
                 FloorGraphNode fNode = mGraphClose[mGraphClose.Count - 1];
                 for (int i = mGraphClose.Count - 1; i >= 0; i--)
                 {
-                    if (fNode == mGraphClose[i] || i == mClose.Count - 1)
+                    if (fNode.parent == mGraphClose[i].id || i == mGraphClose.Count - 1)
                     {
                         fNode = mGraphClose[i];
                     }
                     else
-                        mClose.RemoveAt(i);
+                        mGraphClose.RemoveAt(i);
                 }
                 mStopped = true;
                 return mGraphClose;
@@ -380,16 +357,11 @@ namespace EvacuationSimulation
                     break;
                 }
 
-                if (mClose.Count > 8000) //mSearchLimit)
+                if (mClose.Count > mSearchLimit)
                 {
                     mStopped = true;
                     return null;
                 }
-
-                /*
-                if (mPunishChangeDirection)
-                    mHoriz = (parentNode.X - parentNode.PX);
-                */
 
                 //Lets calculate all successors
                 //for (int i=0; i<(mDiagonals ? 8 : 4); i++)
@@ -431,62 +403,12 @@ namespace EvacuationSimulation
 
                         }
                     }
-
-                    int     foundInOpenIndex = -1;
-                    for(int j=0; j<mOpen.Count; j++)
-                    {
-                        if (mOpen[j].X == newNode.X && mOpen[j].Y == newNode.Y)
-                        {
-                            foundInOpenIndex = j;
-                            break;
-                        }
-                    }
-                    if (foundInOpenIndex != -1 && mOpen[foundInOpenIndex].G <= newG)
-                        continue;
-
-                    int     foundInCloseIndex = -1;
-                    for(int j=0; j<mClose.Count; j++)
-                    {
-                        if (mClose[j].X == newNode.X && mClose[j].Y == newNode.Y)
-                        {
-                            foundInCloseIndex = j;
-                            break;
-                        }
-                    }
-                    if (foundInCloseIndex != -1 && mClose[foundInCloseIndex].G <= newG)
-                        continue;
-
+                   
                     newNode.PX      = parentNode.X;
                     newNode.PY      = parentNode.Y;
                     newNode.G       = newG;
+                    newNode.H       = mHEstimate * (Math.Abs(newNode.X - end.X) + Math.Abs(newNode.Y - end.Y));
 
-                    switch(mFormula)
-                    {
-                        default:
-                        case HeuristicFormula.Manhattan:
-                            newNode.H       = mHEstimate * (Math.Abs(newNode.X - end.X) + Math.Abs(newNode.Y - end.Y));
-                            break;
-                        case HeuristicFormula.MaxDXDY:
-                            newNode.H       = mHEstimate * (Math.Max(Math.Abs(newNode.X - end.X), Math.Abs(newNode.Y - end.Y)));
-                            break;
-                        case HeuristicFormula.DiagonalShortCut:
-                            int h_diagonal  = Math.Min(Math.Abs(newNode.X - end.X), Math.Abs(newNode.Y - end.Y));
-                            int h_straight  = (Math.Abs(newNode.X - end.X) + Math.Abs(newNode.Y - end.Y));
-                            newNode.H       = (mHEstimate * 2) * h_diagonal + mHEstimate * (h_straight - 2 * h_diagonal);
-                            break;
-                        case HeuristicFormula.Euclidean:
-                            newNode.H       = (int) (mHEstimate * Math.Sqrt(Math.Pow((newNode.X - end.X) , 2) + Math.Pow((newNode.Y - end.Y), 2)));
-                            break;
-                        case HeuristicFormula.EuclideanNoSQR:
-                            newNode.H       = (int) (mHEstimate * (Math.Pow((newNode.X - end.X) , 2) + Math.Pow((newNode.Y - end.Y), 2)));
-                            break;
-                        case HeuristicFormula.Custom1:
-                            Point dxy       = new Point(Math.Abs(end.X - newNode.X), Math.Abs(end.Y - newNode.Y));
-                            int Orthogonal  = Math.Abs(dxy.X - dxy.Y);
-                            int Diagonal    = Math.Abs(((dxy.X + dxy.Y) - Orthogonal) / 2);
-                            newNode.H       = mHEstimate * (Diagonal + Orthogonal + dxy.X + dxy.Y);
-                            break;
-                    }
                     if (mTieBreaker)
                     {
                         int dx1 = parentNode.X - end.X;
@@ -498,31 +420,11 @@ namespace EvacuationSimulation
                     }
                     newNode.F       = newNode.G + newNode.H;
 
-                    /*
-                    #if DEBUGON
-                    if (mDebugProgress && PathFinderDebug != null)
-                        PathFinderDebug(parentNode.X, parentNode.Y, newNode.X, newNode.Y, PathFinderNodeType.Open, newNode.F, newNode.G);
-                    #endif
-                    */
-
-                    //It is faster if we leave the open node in the priority queue
-                    //When it is removed, all nodes around will be closed, it will be ignored automatically
-                    //if (foundInOpenIndex != -1)
-                    //    mOpen.RemoveAt(foundInOpenIndex);
-
-                    //if (foundInOpenIndex == -1)
                     discovered[ newNode.X, newNode.Y ] = true;
                     mOpen.Push(newNode);
                 }
 
                 mClose.Add(parentNode);
-
-                /*
-                #if DEBUGON
-                if (mDebugProgress && PathFinderDebug != null)
-                    PathFinderDebug(0, 0, parentNode.X, parentNode.Y, PathFinderNodeType.Close, parentNode.F, parentNode.G);
-                #endif
-                */
             }
 
             mCompletedTime = HighResolutionTime.GetTime();

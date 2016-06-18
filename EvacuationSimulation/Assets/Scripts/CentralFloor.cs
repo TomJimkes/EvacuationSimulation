@@ -257,7 +257,7 @@ namespace EvacuationSimulation
             //After we have built the two new datastructures, we can finally create the graph using DFS
             //TODO: DFS IMPLEMENTATION
             //Add the first node to the graph
-            fGraph.AddNode(1, new List<int>(), isExit[1]);
+            fGraph.AddNode(1, new List<int>(), 12, 34, isExit[1]);
             centralEdgeId = 1;
             DFSGraphBuilder(roomsPerDoor, doorsPerRoom, isExit, new List<int>());
 
@@ -279,7 +279,7 @@ namespace EvacuationSimulation
                         //Add incoming and outgoing edge between nodes
                         //recurese on that node
 
-                        fGraph.AddNode(child, new List<int>(), isExit[child]);
+                        fGraph.AddNode(child, new List<int>(), 12, 34, isExit[child]);
                         int edgeId1 = centralEdgeId++;
                         int edgeId2 = centralEdgeId++;
                         fGraph.AddEdge(edgeId1, room, child, door);

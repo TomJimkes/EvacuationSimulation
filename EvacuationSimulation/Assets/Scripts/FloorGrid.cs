@@ -39,6 +39,9 @@ namespace EvacuationSimulation
             }
 
             PathFinder = new PathFinder(pathfindGrid);
+
+            
+
         }
     }
 }

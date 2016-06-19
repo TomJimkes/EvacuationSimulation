@@ -6,12 +6,14 @@ namespace EvacuationSimulation
 {
     public class FireGrid : MonoBehaviour
     {
-        GameObject[,] fireObjects = new GameObject[50, 50];
+        GameObject[,] fireObjects;
         GameObject firePrefab;
         private float time;
 
         void Start()
         {
+            fireObjects = new GameObject[GameManager.Instance.RealFloorGrid.grid.GetLength(0), 
+                                         GameManager.Instance.RealFloorGrid.grid.GetLength(1)];
             firePrefab = Resources.Load<GameObject>("Prefabs/Fire");
             CreateFire(new Vector2(25, 25));
         }
@@ -65,11 +67,11 @@ namespace EvacuationSimulation
                     var current = new Vector2(square.x + x, square.y + y);
                     if (Vector2.Distance(square, current) > 2.5)
                         continue;
-                    if (this[current] != null)
-                        continue;
                     if (current.x < 0 || current.x > fireObjects.GetLength(0) - 1)
                         continue;
                     if (current.y < 0 || current.y > fireObjects.GetLength(1) - 1)
+                        continue;
+                    if (this[current] != null)
                         continue;
                     result.Add(current);
                 }
@@ -80,7 +82,16 @@ namespace EvacuationSimulation
 
         GameObject this[Vector2 v]
         {
-            get { return fireObjects[(int)v.x, (int)v.y]; }
+            get {
+                try
+                {
+                    return fireObjects[(int) v.x, (int) v.y];
+
+                }
+                catch
+                {
+                    return null;
+                } }
             set { fireObjects[(int) v.x, (int) v.y] = value; }
         }
 
